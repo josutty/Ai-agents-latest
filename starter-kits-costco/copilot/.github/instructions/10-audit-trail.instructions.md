@@ -1,0 +1,37 @@
+---
+description: Mandatory audit trail and harness
+applyTo: "**"
+---
+
+# Audit Trail
+
+Every **public command** completing or escalating must persist:
+
+`artifacts/audit/<YYYY-MM-DD>-<command>-<task>.md`
+
+The orchestrator writes `artifacts/audit/<YYYY-MM-DD>-orchestrator-agent-<command>.md`. Primary agents write their own audit when they run outside a parent command. **Subagents** return structured IO + confidence to the parent; they do not write a second audit unless the parent command names them as the audit owner (`audit-trail-writer`).
+
+Required sections: **Command iteration ledger**, What, Why, How, Validation, Open Items, Next command.
+
+Orchestrator audits must include the ledger table from `audit-trail-template.md` (one row per command iteration; early stop = one row with Next action **Stop**). Pre-commit rejects audits under `artifacts/audit/` that omit the ledger.
+
+User-facing completion:
+
+```
+✅ /<command> complete.
+**Next command:** /<next>
+```
+
+No secrets/PHI in audits.
+
+Only `harness-updater` writes `docs/harness/progress.md` and `docs/harness/decisions.md`. Decisions are **append-only**.
+
+## Phase-changing commands (must call harness-updater)
+
+Intake: `/generate-brd` 
+Plan: `/plan-sprint` 
+Execute: `/implement-api`, `/implement-ui`, `/expand-test-coverage`, `/run-tests`, `/run-eval`, `/close-eval-gaps`, `/review-changes`, `/application-summary`
+
+Satellites (audit only, no harness row): `/propose-architecture`, `/generate-ui-design`
+
+All other commands still require an audit path in DoD.

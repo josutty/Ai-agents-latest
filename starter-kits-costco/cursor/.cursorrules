@@ -1,0 +1,61 @@
+# Cursor AI Factory — Starter Kit Governance
+
+Portable **12-command spine** for Cursor. **11 public commands** + shipped **`/close-eval-gaps`** (eval fix loop).
+
+Do **not** assume a vendor, warehouse, optical, AS400, or HIPAA domain. Fill `.cursor/config.yaml` before generating product code.
+
+Hard guarantees are enforced by `.cursor/hooks/` and git hooks (`.githooks/`). Cursor loads `.cursor/rules/*.mdc`.
+
+---
+
+## 1. Prime directives
+
+1. **Provenance over invention.** Cite a source or register `ASSUMPTION-<id>`. Uncited behavior is blocked from Ready.
+2. **Plan → Act → Validate → Refine** (build/quality) or **Plan → Act → Observe → Reflect** (intake). Max 3 ceiling; stop when iteration 1 Validate/Observe passes.
+3. **Resolve before ask.** Load plan + manifest + logs first when supplied. Skill: `.cursor/skills/plan-as-input/`.
+4. **Least privilege.** Destructive actions require a human gate. No secrets in code, logs, or artifacts.
+5. **Everything is an artifact.** Write `artifacts/audit/<YYYY-MM-DD>-<agent>-<task>.md`.
+6. **Traceability.** Rule → story → contract/DDL/UI → code → test → evidence.
+
+## 2. Command spine
+
+```
+/generate-brd → /propose-architecture → /plan-sprint
+  → /generate-ui-design + /implement-api → /implement-ui
+  → /expand-test-coverage → /run-tests → /run-eval
+  → /close-eval-gaps (loop until fix-queue clear)
+  → /review-changes → /application-summary
+```
+
+Execute spine:
+
+```
+/implement-api → /implement-ui → /expand-test-coverage → [human: test-package Approved] → /run-tests → /run-eval → /close-eval-gaps → /review-changes → /application-summary
+```
+
+Operator map: [CURSOR-FLOW.md](CURSOR-FLOW.md).
+
+## 3. Orchestration
+
+- Route slash commands through **orchestrator-agent** by explicit name.
+- Spawn primaries from `.cursor/agents/*.md`; specialists from `.cursor/subagents/`.
+- **Agent-owned implement:** Java/Next.js per `docs/architecture/stack-conventions.md` — no J2 template render pipeline.
+
+## 4. Human gates
+
+- `/generate-brd` → BRD **Accepted** (or waiver in `docs/harness/decisions.md`)
+- `/plan-sprint` → plan **Approved**
+- `/expand-test-coverage` → test-package **Approved** before `/run-tests`
+- Completeness ledger from `/run-eval` before `/review-changes`
+
+## 5. Always-on rules
+
+- `.cursor/rules/00-global-governance.mdc`
+- `.cursor/rules/01-project-context.mdc`
+- `.cursor/rules/02-security-and-compliance.mdc`
+- `.cursor/rules/07-testing-and-quality.mdc`
+- `.cursor/rules/09-agent-orchestration.mdc`
+- `.cursor/rules/10-audit-trail.mdc`
+- `.cursor/rules/11-intake-planning-governance.mdc`
+- `.cursor/rules/22-behavior-provenance-and-anti-invention.mdc`
+- `.cursor/rules/31-untrusted-intake.mdc`
