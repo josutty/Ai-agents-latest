@@ -1,0 +1,22 @@
+{
+  // Agent-scoped hooks run the agent-guard (.github/agent-guard). Preview; Local harness only.
+  "chat.useHooks": true,
+  "chat.useCustomAgentHooks": true,
+  "chat.useAgentsMdFile": true,
+
+  // SPEED: no approval clicks for the team's routine commands. The agent-guard still denies anything outside
+  // each agent's policy. Setting names can change between VS Code versions — check Settings if one shows as unknown.
+  "chat.tools.terminal.autoApprove": {
+    "npm run typecheck": true, "npm run lint": true, "npm test": true, "npm run test": true, "npm run build": true,
+    "npm run coverage": true, "npm run e2e": true, "npm run build-storybook": true,
+    "npx vitest": true, "npx eslint": true, "npx tsc": true, "npx playwright test": true, "node tools/": true, "node tools/run.mjs": true,
+    "git add": true, "git commit": true, "git status": true, "git diff": true, "git log": true, "git rev-parse": true,
+    "git restore": true, "date": true,
+    "git push": false, "git config": false, "rm": false, "npx -y": false, "npx --yes": false
+  },
+  // Edits are checked per agent by the guard; keep the team's own setup protected.
+  "chat.tools.edits.autoApprove": {
+    "**/*": true, "**/.github/**": false, "**/.vscode/**": false, "**/.githooks/**": false, "**/agent-docs/**": false,
+    "**/tools/hooks/**": false, "**/.env": false, "**/.env.local": false, "**/.env.production": false
+  }
+}

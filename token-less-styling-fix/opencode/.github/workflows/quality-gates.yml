@@ -1,0 +1,52 @@
+# Quality gates on every push and pull request — the same commands the agents run (AGENTS.md §6).
+# Agents and humans never push without these passing. Existing projects: keep only the steps PROJECT.md's command map has.
+name: quality-gates
+on:
+  push:
+    branches: ['**']
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'   # AGENTS.md §1: Node >= 22.22
+          cache: npm
+      - run: npm ci
+      # Organization-owned repos need a free license for this action: add the GITLEAKS_LICENSE secret, or delete this step.
+      - name: Secrets scan
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+      - name: Dependency audit (production deps, high+)
+        run: npm audit --omit=dev --audit-level=high
+      - name: Format
+        run: |
+          if npm run | grep -q 'format:check'; then npm run format:check; else echo "no format:check script — skipped"; fi
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run coverage
+      - run: npm run build
+      - run: npm run build-storybook
+      - name: E2E (Playwright + axe)
+        run: |
+          npx playwright install --with-deps chromium
+          npm run e2e
+      - name: Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7

@@ -1,0 +1,34 @@
+{
+  "_help": "Edit the four model names, then run: node tools/set-models.mjs. Planning agents (strongest) decide quality \u2014 give them your best model. The reviewer must be a DIFFERENT model (ideally another family) from the coder's, or it shares the coder's blind spots; set-models warns if not.",
+  "_note": "Checked against the OpenCode Go list on 22 Oct 2026 (deepseek-v4-flash is no longer listed). Each Go model has its own monthly limit: builders on V4.1 Flash, few planning calls on V4 Pro, reviewer on GLM-5.2 (another family). Confirm IDs with /models. Avoid the 'Contributor' models for client code (prompts may be used for training).",
+  "tiers": {
+    "strongest": "opencode-go/deepseek-v4-pro",
+    "strong": "opencode-go/deepseek-v4.1-flash",
+    "reviewer": "opencode-go/glm-5.2",
+    "fast": "opencode-go/deepseek-v4.1-flash"
+  },
+  "agents": {
+    "app-bootstrap": "fast",
+    "architect": "strongest",
+    "codebase-scanner": "strong",
+    "coder": "strong",
+    "component-generator": "strong",
+    "coverage-checker": "strong",
+    "debugger": "strongest",
+    "fsd-planner": "strongest",
+    "hybrid-api-config": "strong",
+    "library-advisor": "strongest",
+    "mock-data-generator": "strong",
+    "orchestrator": "strong",
+    "pack-builder": "strong",
+    "pack-tester": "strong",
+    "reflector": "fast",
+    "researcher": "fast",
+    "reviewer": "reviewer",
+    "schema-parser": "fast",
+    "store-architect": "strong",
+    "styling-engineer": "strong",
+    "test-engineer": "strong",
+    "wireframe-analyzer": "strongest"
+  }
+}
