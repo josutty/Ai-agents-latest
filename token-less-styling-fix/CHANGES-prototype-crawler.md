@@ -112,3 +112,6 @@ Not changed in the ports: `port-drift.mjs`, `README*`, `CLAUDE.md`, `settings.js
 - Block matching uses each block's heading; a card with no clear heading is listed but not compared.
 - `visual.png` is information only. Real data and fonts add red areas that are not defects.
 - Styling-engineer, coder and component-generator still run on Haiku in `models.json`; moving them to a stronger model is a separate setting.
+
+## Small fix — missing Playwright
+`tools/design-spec.mjs` and `tools/discover-interactions.mjs` now stop with a clear message (run app-bootstrap Run 1, or `npm i -D @playwright/test jsdom` + `npx playwright install chromium`) instead of a Node stack trace when `@playwright/test` is missing. Same files updated in `claude/tools/` and `opencode/tools/`. `RUN-ORDER-one-screen.md` and `HOW-TO-pick-scope-keywords.md` now say to run app-bootstrap Run 1 before slicing or extracting (the slicer also needs `jsdom`), and to use Node 22.22+ / 24.15+.

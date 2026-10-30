@@ -14,7 +14,11 @@
 // element is shown and measured. Severities: content / rule / layout block; style needs a reason; data = info.
 // `--start` runs the dev server in mock mode for the comparison. Browser: `npx playwright install chromium`
 // (or set CHROMIUM_PATH). Exit code 1 when compare finds mismatches beyond tolerance.
-import { chromium } from '@playwright/test';
+let chromium;
+try { ({ chromium } = await import('@playwright/test')); } catch {
+  console.error('✘ @playwright/test is not installed in this project.\n  Run app-bootstrap Run 1 first (it installs it), or by hand:  npm i -D @playwright/test jsdom   then   npx playwright install chromium\n  (PowerShell blocks npm?  prefix the same command with: node tools/run.mjs)');
+  process.exit(2);
+}
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { spawn } from 'node:child_process';
 import { basename, resolve } from 'node:path';

@@ -1,0 +1,26 @@
+#!/bin/sh
+# Enable once per clone:  git config core.hooksPath .githooks
+# 1. Blocks commits on the base branch (AGENTS.md §7).
+# 2. Formats + lint-fixes ONLY the staged files (lint-staged), when the project has it configured.
+# 3. Scans the staged changes for secrets (gitleaks), when gitleaks is installed.
+branch=$(git symbolic-ref --short HEAD 2>/dev/null)
+base=$(sed -n 's/^base-branch:[[:space:]]*//p' PROJECT.md 2>/dev/null | head -n 1)
+for b in main master develop $base; do
+  if [ "$branch" = "$b" ]; then
+    echo "pre-commit: commits on '$branch' are blocked — the agent team works on feat/* or fix/* branches (AGENTS.md §7)." >&2
+    exit 1
+  fi
+done
+
+if [ -e node_modules/.bin/lint-staged ] || [ -e node_modules/.bin/lint-staged.cmd ]; then
+  if grep -q '"lint-staged"' package.json 2>/dev/null; then
+    npx --no-install lint-staged || { echo "pre-commit: lint-staged failed — fix the errors above (the commit was not made)." >&2; exit 1; }
+  fi
+fi
+
+if command -v gitleaks >/dev/null 2>&1; then
+  gitleaks protect --staged --redact --no-banner || { echo "pre-commit: gitleaks found a possible secret in the staged changes — remove it (the commit was not made)." >&2; exit 1; }
+else
+  echo "pre-commit: tip — install gitleaks to scan every commit for secrets (https://github.com/gitleaks/gitleaks)." >&2
+fi
+exit 0
